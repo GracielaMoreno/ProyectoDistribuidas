@@ -23,27 +23,7 @@ def lecturaDocumento(docEntrada):
 
     return listaCompuestos
 
-def escribirDocSalida(lineas, archivo):
-    docSalida = open(archivo, "w")
-    for linea in lineas:
-        docSalida.write(str(linea) + "\n")
-    docSalida.close
-    print "Escritura finalizada"
-
-#Calculo del coeficiente
-def CoeficienteTanimoto(cadena1, cadena2):
-
-    c1 = extraerArrayCaracteres(cadena1)
-    c2 = extraerArrayCaracteres(cadena2)
-
-    n1 = NumumeroCompuestos(c1)
-    n2 = NumumeroCompuestos(c2)
-    ArregloElementosComunes = extraerTerminosComunes(c1,c2)
-    n3 = NumumeroCompuestos(ArregloElementosComunes)
-    #print n1,n2,n3
-    coeficienteSimilitud  = (n3/float (n1+n2-n3))
-    return "{0:.2f}".format(coeficienteSimilitud )
-
+#extraer los terminos comunes de las formulas ingresadas
 def extraerTerminosComunes(c1,c2):
     Aux = set(c1).intersection(set(c2))
     lis3 = {}
@@ -53,7 +33,7 @@ def extraerTerminosComunes(c1,c2):
         else:
             lis3[k] = c1[k]
     return lis3
-
+#se extraer los caracteres de cada compuesto 
 def extraerArrayCaracteres(comp1):
     diccionario = {}
     for letra in comp1:
@@ -73,6 +53,19 @@ def NumumeroCompuestos(diccionario):
     for k, v in diccionario.items():
         n += (int(v))
     return n
+#Calculo del coeficiente
+def CoeficienteTanimoto(cadena1, cadena2):
+
+    c1 = extraerArrayCaracteres(cadena1)
+    c2 = extraerArrayCaracteres(cadena2)
+
+    n1 = NumumeroCompuestos(c1)
+    n2 = NumumeroCompuestos(c2)
+    ArregloElementosComunes = extraerTerminosComunes(c1,c2)
+    n3 = NumumeroCompuestos(ArregloElementosComunes)
+    #print n1,n2,n3
+    coeficienteSimilitud  = (n3/float (n1+n2-n3))
+    return "{0:.2f}".format(coeficienteSimilitud )
 
 #Llenado de la matriz a imrpimir
 def llenadoDeMatriz(formulaDicionario):
@@ -85,25 +78,33 @@ def llenadoDeMatriz(formulaDicionario):
             listaCoeficienteSimilitud.append(coeficiente)
     return listaCoeficienteSimilitud
 
+def escribirDocSalida(lineas, archivo):
+    docSalida = open(archivo, "w")
+    for linea in lineas:
+        docSalida.write(str(linea) + "\n")
+    docSalida.close
+    print "Escritura finalizada"
 
+#metodo main para realizar la ejejcucion de las funciones 
 def main ():
+    #se toma el tiempo de inicio del proceso
     ini = time.time()
     print "El calculo tomara tiempo !!"
     dicAux = []
-    dicAux = lecturaDocumento("pru.tsv")
-
-    pool = Pool(processes=4)  # start 4 worker processes
-    inPs = time.time()
-    
+    dicAux = lecturaDocumento("ZINC_chemicals.tsv")
+#se declara la cantidad de procesadores que tiene el ordenados en donde se va ejecutar el codigo
+    pool = Pool(processes=4)  
+ #pool es los que nos ayuda a la paralelizacion de la funcion llenado de matriz
     coeficienteSimilitud  = pool.map(llenadoDeMatriz, (dicAux,))
-    endPS = time.time()
+   # se obtiene el nombre de los compuestos y se los escribe en el archivo de salida PRUEBAFINAL.tsv
     for i in range (len(coeficienteSimilitud )):
-        escribirDocSalida(coeficienteSimilitud [i],"SOLUCIONES.tsv")
+        escribirDocSalida(coeficienteSimilitud [i],"PRUEBAFINAL.tsv")
+   #se toma el tiempo de finalizacion del proceso 
     end = time.time()
+    # se calcula el tiempo de ejecucion q es la diferencia de tiempofinal -tiempo inicial
     final = end - ini
     print "El tiempo de ejecucion es:",final
 
 if __name__ == '__main__':
     main()
-end = time.time()
 
