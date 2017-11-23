@@ -66,17 +66,17 @@ list<char> obtenerArrayDeElementoUnico(list<char> array)
     return elementoUnico;
 
 }
-
+//SE REALIZA EL CONTEO DE LOS ELEMENTOS Q TIENE EL ARCHIVO 
 int contarElementos(list<char> array)
 {
     int nroElementos=0;
     list<char> elementoUnico=obtenerArrayDeElementoUnico(array);
     for (std::list<char>::iterator it=elementoUnico.begin(); it!=elementoUnico.end() ; ++it)
     nroElementos+=numeroRepiteElemento(array,*it);
-    //CUENTA LOS ELEMENTOS UNICOS
     return nroElementos;
 }
 
+//CUENTA LA CANTIDAD DE ELEMETOS QUE SE REPITEN 
 int contarElementosComunes(list<char> array1,list<char> array2)
 {
     list<char> elementoUnico=obtenerArrayDeElementoUnico(array1);
@@ -86,6 +86,7 @@ int contarElementosComunes(list<char> array1,list<char> array2)
     //CUANTA EL NUMERO DE ELELEMTOS COMUNES
     return cont;
 }
+
 //RECIBE COMO PARAMETRO LA CADENA1 Y LA CADENA 2 A COMPARAR
 double IndiceJaccardTanimoto(string cadena1, string cadena2)
 {
@@ -101,17 +102,19 @@ double IndiceJaccardTanimoto(string cadena1, string cadena2)
     return indice;
 }
 
-
 int main(void)
 {
+//LECTURA DEL DOCUMENTO DE ENTRADA
     string lineaDeEntrada;
     ifstream docEntrada;
+//SE DEFINE CUANTOS ID SE DEBE LEER EN EL ARCHIVO 
     string id[12423];
+//SE DEFINE CUANTOS ID SE DEBE LEER EN EL ARCHIVO 
     string clave[12423];
     docEntrada.open("ZINC_chemicals.tsv");
     int cont=0;
     getline(docEntrada,lineaDeEntrada);
-    //carga e variables
+   //SE CARGAN LAS VARIABLES A UTILIZAR PARA EL CALCULO E IMPRESION 
 
     while(docEntrada)
     {
@@ -131,12 +134,14 @@ int main(void)
     docSalida << fixed;
     docSalida << setprecision(2);
     //12422
-	int omp_get_num_threads(omp_get_max_threads());
+    //SE UTILIZA PARA OBTENER EL MAXIMO NUMERO DE PROCESASORES QUE TIENE EL ORDENADOR
+     int omp_get_num_threads(omp_get_max_threads());
+    //SE REALIZA LA PARALELIZACION CON LA AYUDA DE LA LIBRERIA OPEN MP 
     #pragma omp parallel for ordered
 
     for(int i=0; i<12422; i++)
     {
-		//hace solo la parte triangulargular
+	//HACE SOLO LA PARTE TRIANGULAR
         for (int j=i; j<12422; j++)
         {
            
@@ -147,9 +152,10 @@ int main(void)
         }
 
     }
-
+	//SE CALCULA EL TIEMPO DE EJCUCION DE TODO EL PROCESO 
 	float time=((double)clock()-start)/CLOCKS_PER_SEC;
 	printf("El archivo se escribio sin problemas \n");
+	//SE IMPRIME EL TIEMPO DE EJCUCION 
 	printf("El tiempo que se demoro en la ejecucion fue :%f\n",time);
     return 0;
 }
